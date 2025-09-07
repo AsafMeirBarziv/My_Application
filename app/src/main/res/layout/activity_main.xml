@@ -11,33 +11,37 @@
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="162dp"
+        android:layout_marginEnd="80dp"
         android:text="12:45"
         android:textSize="35sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/editTextTime"
-         />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="set your time"
+        android:layout_marginTop="12dp"
         android:inputType="time"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="set your time"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.522"
 
-        app:layout_constraintTop_toBottomOf="@+id/textViewTime"
- />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
 
     <Button
         android:id="@+id/buttonSetTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="61dp"
         android:text="Set Time"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
 
@@ -49,6 +53,22 @@
         android:text="open activity II"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+
+        android:layout_marginBottom="8dp"
+        android:contentDescription="clock"
+        android:src="@drawable/dali_clock"
+        app:layout_constraintBottom_toTopOf="@+id/buttonOpenActivityII"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSetTime" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@+id/buttonSetTime"
+        tools:src="@drawable/dali_clock" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
