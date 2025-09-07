@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.app.ComponentCaller;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -72,16 +77,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             Intent intent = new Intent(this, MainActivity2.class);
             intent.putExtra("time", editTextTime.getText().toString());
-            startActivityForResult(intent, 0);
+
+            //startActivityForResult(intent, 0);
+
+            activityResultLauncher.launch(intent);
 
         }
     }
+    private ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::handleResult
+    );
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data, @NonNull ComponentCaller caller) {
-        super.onActivityResult(requestCode, resultCode, data, caller);
-
-        if (requestCode == 0 && resultCode == RESULT_OK) {
+    private void handleResult(ActivityResult result) {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+            // Handle the result here, e.g., get data from result.getData()
+            Intent data = result.getData();
             String hour = data.getStringExtra("hour");
             textViewTime.setText(hour);
 
@@ -93,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Set the updated Date object from the Calendar
             textViewTime.setText(calendar.getTime().toString());
-        }
 
+        }
     }
+
 }
