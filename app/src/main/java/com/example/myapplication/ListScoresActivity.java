@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -57,6 +60,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         listViewcScores.setAdapter(adapter);
         listViewcScores.setOnItemClickListener(this);
         listViewcScores.setOnItemLongClickListener(this);
+        registerForContextMenu(listViewcScores);
         buttonAdd.setOnClickListener(this);
 
 
@@ -69,6 +73,36 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.listViewScores) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.score_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position; // Position of the item in the ListView
+
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_edit) {
+            // Handle edit action for item at 'position'
+            return true;
+        } else if (itemId == R.id.menu_delete) {
+            // Handle delete action for item at 'position'
+            confirmDeleteScore();
+
+            return true;
+        } else if (itemId == R.id.menu_share) {
+            // Handle share action for item at 'position'
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     private void confirmDeleteScore() {
