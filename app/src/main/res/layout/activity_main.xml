@@ -49,16 +49,17 @@
         android:id="@+id/buttonOpenActivityII"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="112dp"
         android:text="open activity II"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
         android:layout_marginTop="8dp"
 
         android:layout_marginBottom="8dp"
@@ -71,4 +72,4 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonSetTime"
         tools:src="@drawable/dali_clock" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
