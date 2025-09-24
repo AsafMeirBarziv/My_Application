@@ -160,17 +160,21 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // User confirmed deletion, remove the item
-                Query query = db.collection("scores").limit(2).
-                        whereGreaterThan("score", 12);
+                db.collection("scores").
+                        document(scores.get(adapter.getSelectedPosition()).getName()).
+                        delete().
+                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.i("onSuccess", "document deleted");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("onFailure", "Error deleting document", e);
+                            }
+                        });
 
-                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        Log.i("onSuccess", "query succeed with queryDocumentSnapshots: " + queryDocumentSnapshots.size());
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            document.getReference().delete();
-                        }
-                    }});
 
                 scores.remove(adapter.getSelectedPosition());
                 adapter.notifyDataSetChanged();
