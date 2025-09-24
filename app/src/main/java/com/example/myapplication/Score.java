@@ -4,6 +4,9 @@ public class Score {
     String name;
     int score;
 
+    public Score() {
+    }
+
     public String getName() {
         return name;
     }

@@ -16,15 +16,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.util.ArrayList;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class ListScoresActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ListScoresActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, OnSuccessListener<DocumentReference>, OnFailureListener {
 
     ListView listViewcScores;
     TextView textViewName;
@@ -35,6 +50,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     ArrayList<Score> scores = new ArrayList<>();
     ScoreItemAdapter adapter;
 
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,14 +72,15 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
         // adapter = new ArrayAdapter<Score>(this, android.R.layout.simple_list_item_1, scores);
         adapter = new com.example.myapplication.ScoreItemAdapter(this, R.layout.score_item, scores);
-
         listViewcScores.setAdapter(adapter);
+        ;
+        listViewcScores.setAdapter(adapter);
+
         listViewcScores.setOnItemClickListener(this);
         listViewcScores.setOnItemLongClickListener(this);
         registerForContextMenu(listViewcScores);
+
         buttonAdd.setOnClickListener(this);
-
-
         buttonDeleteScore = findViewById(R.id.buttonDeleteScore);
         buttonDeleteScore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +90,33 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
             }
         });
+
+
+        db = FirebaseFirestore.getInstance();
+        //addScoresToDB(db);
+    }
+
+    void addScoresToDB(FirebaseFirestore db){
+        // Create a new Map with the scores
+        Map<String, ArrayList<Score>> data = new HashMap<>();
+        data.put("scores", scores);
+
+
+// Add a new document with a generated ID
+        db.collection("scores")
+                .add(data)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("FB OnSuccessListener", "scores added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("FB OnFailureListener", "Error adding scores", e);
+                    }
+                });
     }
 
     @Override
@@ -116,6 +160,17 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // User confirmed deletion, remove the item
+                Query query = db.collection("scores").
+                        whereEqualTo("name", scores.get(adapter.getSelectedPosition()).getName());
+
+                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.i("onSuccess", "query succeed with queryDocumentSnapshots: " + queryDocumentSnapshots.size());
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            document.getReference().delete();
+                        }
+                    }});
 
                 scores.remove(adapter.getSelectedPosition());
                 adapter.notifyDataSetChanged();
@@ -137,17 +192,11 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState,persistentState);
-
-    }
-
     private void createSampleScores() {
         scores = new ArrayList<>();
-        scores.add(new Score("Asaf",134567));
-        scores.add(new Score("Ben",4567));
-        scores.add(new Score("Anat",1342567));
+        scores.add(new Score("Asaf",45));
+        scores.add(new Score("Ben",55));
+        scores.add(new Score("Anat",51));
     }
 
     @Override
@@ -172,6 +221,10 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
                 return;
             }
             Log.i("onClick score", String.valueOf(score));
+            db.collection("scores").
+                    add(new Score(name,score)).
+                    addOnSuccessListener(this).addOnFailureListener(this);
+
             scores.add(new Score(name,score));
             adapter.notifyDataSetChanged();
             Toast.makeText(this, name + " with score " + score + " added", Toast.LENGTH_SHORT).show();
@@ -191,5 +244,15 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         buttonDeleteScore.setEnabled(true);
         adapter.notifyDataSetChanged();
         return false;
+    }
+
+    @Override
+    public void onSuccess(DocumentReference documentReference) {
+        Log.i("onSuccess", "document added with ID: " + documentReference.getId());
+    }
+
+    @Override
+    public void onFailure(@NonNull Exception e) {
+        Log.w("onFailure", "Error adding document", e);
     }
 }
