@@ -68,7 +68,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         editTextScore = findViewById(R.id.EditTextScore);
         buttonAdd = findViewById(R.id.buttonAdd);
 
-        createSampleScores();
+        //createSampleScores();
 
         // adapter = new ArrayAdapter<Score>(this, android.R.layout.simple_list_item_1, scores);
         adapter = new com.example.myapplication.ScoreItemAdapter(this, R.layout.score_item, scores);
@@ -93,7 +93,33 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
 
         db = FirebaseFirestore.getInstance();
+        loadScoresFromDB();
         //addScoresToDB(db);
+    }
+
+    private void loadScoresFromDB() {
+        Log.i("loadScoresFromDB", "loadScoresFromDB");
+
+        db.collection("scores").
+                get().
+                addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.i("onSuccess", "loadScoresFromDB onSuccess");
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Log.i("onSuccess", document.getId() + " => " + document.getData());
+                            Score score = document.toObject(Score.class);
+                            scores.add(score);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("onFailure", "Error getting documents.", e);
+                    }
+                });
+
     }
 
     void addScoresToDB(FirebaseFirestore db){
