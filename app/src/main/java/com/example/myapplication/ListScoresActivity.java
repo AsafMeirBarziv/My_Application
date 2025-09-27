@@ -25,15 +25,19 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +50,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     TextView editTextScore;
     Button buttonAdd;
     Button buttonDeleteScore;
+    Button buttonFilter;
 
     ArrayList<Score> scores = new ArrayList<>();
     ScoreItemAdapter adapter;
@@ -93,19 +98,49 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
 
         db = FirebaseFirestore.getInstance();
-        loadScoresFromDB();
+        getSpecificDocument("scores","Gur");
+        loadScoresFromDB(Integer.MAX_VALUE);
         //addScoresToDB(db);
+        buttonFilter = findViewById(R.id.buttonFilter);
+        buttonFilter.setOnClickListener(this);
     }
 
-    private void loadScoresFromDB() {
+    public void getSpecificDocument(String collectionName, String documentId) {
+        Log.i("getSpecificDocument", "getSpecificDocument :" +collectionName + ":" + documentId);
+        db.collection(collectionName).document(documentId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                // Document found, you can now access its data
+                                Log.d("Firestore", "Document data: " + document.getData());
+                                // Example: Get a specific field
+                                long score = (long) document.get("score");
+                                Log.d("Firestore", "My field value: " + score);
+                            } else {
+                                Log.d("Firestore", "No such document");
+                            }
+                        } else {
+                            Log.d("Firestore", "Error getting document: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void loadScoresFromDB(int maxScore) {
         Log.i("loadScoresFromDB", "loadScoresFromDB");
 
         db.collection("scores").
+                whereLessThan("score" , maxScore).
                 get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         Log.i("onSuccess", "loadScoresFromDB onSuccess");
+                        scores.clear();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Log.i("onSuccess", document.getId() + " => " + document.getData());
                             Score score = document.toObject(Score.class);
@@ -231,40 +266,54 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        String name = textViewName.getText().toString();
-        Log.i("onClick name",name);
-        String s = editTextScore.getText().toString();
-        Log.i("onClick score string",s);
+        if (v.getId() == R.id.buttonAdd) {
+            String name = textViewName.getText().toString();
+            Log.i("onClick name", name);
+            String s = editTextScore.getText().toString();
+            Log.i("onClick score string", s);
 
-        if(s.equals("")){
-            Log.e("onClick score error","is empty");
-        }
+            if (s.equals("")) {
+                Log.e("onClick score error", "is empty");
+            } else {
+                int score;
+                try {
+                    score = Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                    Log.e("onClick score error", e.getMessage());
+                    editTextScore.setError("please enter decimal");
+                    return;
+                }
+                Log.i("onClick score", String.valueOf(score));
+                db.collection("scores").
+                        document(name).
+                        set(new Score(name, score)).
+                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.i("onSuccess", "document added");
+                            }
+                        }).addOnFailureListener(this);
 
-        else {
+                scores.add(new Score(name, score));
+                adapter.notifyDataSetChanged();
+                Toast.makeText(this, name + " with score " + score + " added", Toast.LENGTH_SHORT).show();
+            }
+        } else if (v.getId()== R.id.buttonFilter) {
+
+            String s = editTextScore.getText().toString();
+            Log.i("onClick score string", s);
             int score;
             try {
                 score = Integer.parseInt(s);
-            }
-            catch (NumberFormatException e){
-                Log.e("onClick score error",e.getMessage());
+            } catch (NumberFormatException e) {
+                Log.e("onClick score error", e.getMessage());
                 editTextScore.setError("please enter decimal");
                 return;
             }
-            Log.i("onClick score", String.valueOf(score));
-            db.collection("scores").
-                    document(name).
-                    set(new Score(name,score)).
-                    addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.i("onSuccess", "document added");
-                        }
-                    }).addOnFailureListener(this);
-
-            scores.add(new Score(name,score));
-            adapter.notifyDataSetChanged();
-            Toast.makeText(this, name + " with score " + score + " added", Toast.LENGTH_SHORT).show();
+            loadScoresFromDB(score);
         }
+
+
 
     }
 
