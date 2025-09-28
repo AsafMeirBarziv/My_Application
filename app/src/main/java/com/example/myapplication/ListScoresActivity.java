@@ -32,7 +32,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -98,8 +100,27 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
 
         db = FirebaseFirestore.getInstance();
-        getSpecificDocument("scores","Gur");
-        loadScoresFromDB(Integer.MAX_VALUE);
+        db.collection("scores").addSnapshotListener(new com.google.firebase.firestore.EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, 
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w("Firestore", "Listen failed.", error);
+                    return;
+                }
+                Log.i("Firestore", "Listen QuerySnapshot succeeded.");
+                scores.clear();
+                for (QueryDocumentSnapshot document : value) {
+                    Log.d("Firestore", document.getId() + " => " + document.getData());
+                    Score score = document.toObject(Score.class);
+                    scores.add(score);
+                }
+                adapter.notifyDataSetChanged();
+            }});
+
+                                                    
+        //getSpecificDocument("scores","Gur");
+        //loadScoresFromDB(Integer.MAX_VALUE);
         //addScoresToDB(db);
         buttonFilter = findViewById(R.id.buttonFilter);
         buttonFilter.setOnClickListener(this);
@@ -134,7 +155,10 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         Log.i("loadScoresFromDB", "loadScoresFromDB");
 
         db.collection("scores").
-                whereLessThan("score" , maxScore).
+                //whereLessThan("score" , maxScore).
+                whereGreaterThanOrEqualTo("name",  "A").
+                whereLessThanOrEqualTo("name",  "A\uf7ff"). // The \uf7ff here is just the last known Unicode character, so that the query stops returning results after dealing with every “Th”
+                orderBy("name", Query.Direction.ASCENDING).
                 get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
