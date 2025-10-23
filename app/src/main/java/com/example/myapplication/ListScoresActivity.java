@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -76,6 +78,38 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         listViewcScores = findViewById(R.id.listViewScores);
         textViewName = findViewById(R.id.EditTextName);
         editTextScore = findViewById(R.id.EditTextScore);
+        editTextScore.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String scoreString = editTextScore.getText().toString();
+                Log.i("onTextChanged score string", scoreString);
+
+                if (scoreString.equals("")) {
+                    Log.e(" score error", "is empty");
+                } else {
+                    int score;
+                    try {
+                        score = Integer.parseInt(scoreString);
+                    } catch (NumberFormatException e) {
+                        Log.e(" score error", e.toString());
+                        editTextScore.setError("please enter decimal");
+                        return;
+                    }
+                    Log.i(" score", String.valueOf(score));
+                    seekBarScore.setProgress(score);
+                }
+            }
+        });
 
         buttonAdd = findViewById(R.id.buttonAdd);
         seekBarScore = findViewById(R.id.seekBarScore);
@@ -375,7 +409,12 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        editTextScore.setText(String.valueOf(progress));
+        Log.i("onProgressChanged", String.valueOf(progress));
+        Log.i("onProgressChanged", String.valueOf(fromUser));
+
+        if (fromUser) {
+            editTextScore.setText(String.valueOf(progress));
+        }
     }
 
     @Override
