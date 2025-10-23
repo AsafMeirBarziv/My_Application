@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ListScoresActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, OnSuccessListener<DocumentReference>, OnFailureListener {
+public class ListScoresActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, OnSuccessListener<DocumentReference>, OnFailureListener, SeekBar.OnSeekBarChangeListener {
 
     ListView listViewcScores;
     TextView textViewName;
@@ -58,6 +59,8 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     ScoreItemAdapter adapter;
 
     FirebaseFirestore db;
+
+    SeekBar seekBarScore;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +76,11 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         listViewcScores = findViewById(R.id.listViewScores);
         textViewName = findViewById(R.id.EditTextName);
         editTextScore = findViewById(R.id.EditTextScore);
+
         buttonAdd = findViewById(R.id.buttonAdd);
+        seekBarScore = findViewById(R.id.seekBarScore);
+
+        seekBarScore.setOnSeekBarChangeListener(this);
 
         //createSampleScores();
 
@@ -363,5 +370,21 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onFailure(@NonNull Exception e) {
         Log.w("onFailure", "Error adding document", e);
+    }
+
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        editTextScore.setText(String.valueOf(progress));
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

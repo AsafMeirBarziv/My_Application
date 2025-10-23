@@ -12,12 +12,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
+            android:name=".ListScoresActivity"
+            android:exported="true"
+            android:persistableMode="persistAcrossReboots">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".shareActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -44,14 +54,6 @@
         <activity
             android:name=".Activity1"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ListScoresActivity"
-            android:exported="true"
-            android:persistableMode="persistAcrossReboots">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
