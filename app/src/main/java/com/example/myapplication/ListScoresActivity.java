@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.text.Editable;
@@ -57,12 +58,21 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     Button buttonDeleteScore;
     Button buttonFilter;
 
+    SharedPreferences sharedPreferences;
+
+
     ArrayList<Score> scores = new ArrayList<>();
     ScoreItemAdapter adapter;
 
     FirebaseFirestore db;
 
     SeekBar seekBarScore;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferences.edit().putInt("score", seekBarScore.getProgress()).apply();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,9 +85,14 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
             return insets;
         });
 
+        sharedPreferences = getSharedPreferences("my_preferences", MODE_PRIVATE);
+
         listViewcScores = findViewById(R.id.listViewScores);
         textViewName = findViewById(R.id.EditTextName);
         editTextScore = findViewById(R.id.EditTextScore);
+        int score = sharedPreferences.getInt("score",60);
+        editTextScore.setText(String.valueOf(score));
+
         editTextScore.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -197,8 +212,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
         db.collection("scores").
                 //whereLessThan("score" , maxScore).
-                whereGreaterThanOrEqualTo("name",  "A").
-                whereLessThanOrEqualTo("name",  "A\uf7ff"). // The \uf7ff here is just the last known Unicode character, so that the query stops returning results after dealing with every “Th”
+                whereGreaterThanOrEqualTo("score",  maxScore).
                 orderBy("name", Query.Direction.ASCENDING).
                 get().
                 addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
