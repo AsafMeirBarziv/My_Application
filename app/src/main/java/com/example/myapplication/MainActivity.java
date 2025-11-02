@@ -3,31 +3,40 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int PICK_IMAGE_REQUEST = 1000;
     TextView textViewTime;
     EditText editTextTime;
     Button buttonSetTime;
     Button buttonOpenActivityII;
+
+    ImageView imageView;
 
 
     @Override
@@ -50,7 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonOpenActivityII = findViewById(R.id.buttonOpenActivityII);
         buttonOpenActivityII.setOnClickListener(this);
 
-
+        imageView = findViewById(R.id.imageView);
+        imageView.setOnClickListener(this);
     }
 
 
@@ -81,6 +91,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             activityResultLauncher.launch(intent);
 
         }
+        else if (v.getId() == R.id.imageView){
+            Toast.makeText(this, "imageView clicked", Toast.LENGTH_SHORT).show();
+            Log.i("MainActivity", "imageView clicked");
+            openImageChooser();
+
+        }
+    }
+
+
+
+    private void openImageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
     private ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
