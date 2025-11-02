@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation("com.firebaseui:firebase-ui-database:9.0.0")
+    implementation(libs.androidx.preference)
 
 // Or the latest version
     testImplementation(libs.junit)

@@ -82,4 +82,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/EditTextScore" />
 
+    <ImageButton
+        android:id="@+id/imageButtonSetting"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonAdd"
+        app:srcCompat="@drawable/setting" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

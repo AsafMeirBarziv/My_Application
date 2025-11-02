@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Color">
+
+    </PreferenceCategory>
+    <ListPreference
+        app:entries="@array/colors"
+        app:entryValues="@array/colorsID"
+        app:key="list_avg_color"
+        app:title="list_avg_color"
+        app:useSimpleSummaryProvider="false" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="check_box_bold"
+        android:title="Use Bold" />
+
+
+</PreferenceScreen>

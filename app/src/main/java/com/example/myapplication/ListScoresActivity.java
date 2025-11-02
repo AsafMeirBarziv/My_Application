@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -57,6 +60,9 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     Button buttonAdd;
     Button buttonDeleteScore;
     Button buttonFilter;
+
+    ImageButton imageButtonSetting;
+
 
     SharedPreferences sharedPreferences;
 
@@ -180,6 +186,20 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         //addScoresToDB(db);
         buttonFilter = findViewById(R.id.buttonFilter);
         buttonFilter.setOnClickListener(this);
+
+        imageButtonSetting = findViewById(R.id.imageButtonSetting);
+        imageButtonSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ListScoresActivity.this, SettingsActivity.class));
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.notifyDataSetChanged();
     }
 
     public void getSpecificDocument(String collectionName, String documentId) {
