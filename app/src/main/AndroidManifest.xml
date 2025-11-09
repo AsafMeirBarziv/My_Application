@@ -12,17 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
+            android:name=".GeminiActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MySettingsActivity"
             android:exported="false"
@@ -37,8 +45,7 @@
             android:persistableMode="persistAcrossReboots">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                </intent-filter>
+            </intent-filter>
         </activity>
         <activity
             android:name=".shareActivity"
@@ -82,6 +89,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-            </application>
+    </application>
 
 </manifest>
