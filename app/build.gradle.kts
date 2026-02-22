@@ -72,6 +72,7 @@ dependencies {
 
     // Required for streaming operations (to use `Publisher` from Reactive Streams)
     implementation("org.reactivestreams:reactive-streams:1.0.4")
+    implementation(libs.firebase.vertexai)
 // Or the latest version
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

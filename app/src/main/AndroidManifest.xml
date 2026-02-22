@@ -12,6 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
+            android:name=".AI_Activity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ListScoresActivity"
+            android:exported="true"
+            android:persistableMode="persistAcrossReboots">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".GeminiActivity"
             android:exported="true">
             <intent-filter>
@@ -39,14 +58,6 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".ListScoresActivity"
-            android:exported="true"
-            android:persistableMode="persistAcrossReboots">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".shareActivity"
             android:exported="true">
