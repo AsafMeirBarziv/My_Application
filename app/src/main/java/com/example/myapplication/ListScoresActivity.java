@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -138,11 +139,12 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         seekBarScore.setOnSeekBarChangeListener(this);
 
         //createSampleScores();
+        db = FirebaseFirestore.getInstance();
 
         // adapter = new ArrayAdapter<Score>(this, android.R.layout.simple_list_item_1, scores);
         adapter = new com.example.myapplication.ScoreItemAdapter(this, R.layout.score_item, scores);
         listViewcScores.setAdapter(adapter);
-        ;
+
         listViewcScores.setAdapter(adapter);
 
         listViewcScores.setOnItemClickListener(this);
@@ -161,7 +163,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
         });
 
 
-        db = FirebaseFirestore.getInstance();
+
         db.collection("scores").addSnapshotListener(new com.google.firebase.firestore.EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, 
@@ -460,4 +462,24 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
     public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
+
+    public void increamentScore(int position, int i) {
+        scores.get(position).setScore(scores.get(position).getScore() + i);
+        adapter.notifyDataSetChanged();
+        db.collection("scores").
+                document(scores.get(position).getName()).
+                update("score", FieldValue.increment(i)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i("onSuccess", "document updated");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("onFailure", "Error adding document", e);
+                    }
+                });
+    };
+
 }

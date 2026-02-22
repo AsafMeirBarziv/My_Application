@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -53,6 +56,13 @@ public class ScoreItemAdapter extends ArrayAdapter<Score> {
 
         // Lookup view for data population
         TextView scoreDescription = convertView.findViewById(R.id.textViewScoreDescription);
+        Button buttonAdd5 = convertView.findViewById(R.id.buttonAdd5);
+        buttonAdd5.setOnClickListener(v -> {
+            Toast.makeText(context, "buttonAdd5 clicked - poaition is " + position, Toast.LENGTH_SHORT).show();
+            Log.i("buttonAdd5", "buttonAdd5 clicked - poaition is " + position);
+            ((ListScoresActivity)context).increamentScore(position, 5);
+
+        });
 
         // Populate the data into the template view using the data object
         if (currentItem != null) {
