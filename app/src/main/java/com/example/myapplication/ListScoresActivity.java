@@ -477,7 +477,7 @@ public class ListScoresActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("onFailure", "Error adding document", e);
+                        Log.w("onFailure", "Error updating document score", e);
                     }
                 });
     };
