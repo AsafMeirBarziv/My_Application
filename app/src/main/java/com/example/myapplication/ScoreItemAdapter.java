@@ -60,7 +60,7 @@ public class ScoreItemAdapter extends ArrayAdapter<Score> {
         buttonAdd5.setOnClickListener(v -> {
             Toast.makeText(context, "buttonAdd5 clicked - poaition is " + position, Toast.LENGTH_SHORT).show();
             Log.i("buttonAdd5", "buttonAdd5 clicked - poaition is " + position);
-            ((ListScoresActivity)context).increamentScore(position, 5);
+            ((ListScoresActivity)context).increamentScore(position, 4);
 
         });
 
